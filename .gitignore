@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.idea/
+.vscode/
+.DS_Store
+
+# 数据与模型不进仓库（这是纪律，不是可选项）
+data/
+*.csv
+*.parquet
+*.pkl
+*.pt
+*.ckpt
+*.log
