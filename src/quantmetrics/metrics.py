@@ -7,6 +7,7 @@ __all__ = [
     "annualized_volatility",
     "max_drawdown",
     "max_drawdown_window",
+    "sharpe_ratio",
     "total_return",
 ]
 
@@ -84,3 +85,24 @@ def max_drawdown_window(prices):
     trough = int(np.argmin(dd))
     peak_idx = int(np.argmax(p[: trough + 1]))
     return (peak_idx, trough, float(dd[trough]))
+
+
+def sharpe_ratio(prices, rf=0.0, ppy=252):
+    """夏普比率 = (每期收益均值 − 每期无风险收益) / 每期收益标准差 × √ppy。
+
+    两个容易写错的点：
+
+      1) rf 是【年化】无风险利率，必须先除以 ppy 换算到每期。
+         如果写成 ``r.mean() - rf``，当 rf=0.03 时你等于「每期」都减掉 3%，
+         而日频数据的每期收益本来只有 0.0x% 量级 —— 结果会离谱到看不出错。
+
+      2) 收益率完全恒定时（价格每期涨同样比例），标准差为 0，
+         夏普在数学上无定义。本库的设计取舍是【抛 ValueError】，
+         让调用方尽早失败（fail fast），而不是返回 nan 把错误静默带下去。
+         理由见 docs/formulas.md 与 README「设计取舍」。
+    """
+    r = _returns(prices)
+    sd = float(np.std(r, ddof=1))
+    if sd == 0.0:
+        raise ValueError("returns are constant; sharpe ratio is undefined")
+    return float((r.mean() - rf / ppy) / sd * np.sqrt(ppy))

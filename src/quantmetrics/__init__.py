@@ -3,6 +3,7 @@ from .metrics import (
     annualized_volatility,
     max_drawdown,
     max_drawdown_window,
+    sharpe_ratio,
     total_return,
 )
 
@@ -11,5 +12,6 @@ __all__ = [
     "annualized_volatility",
     "max_drawdown",
     "max_drawdown_window",
+    "sharpe_ratio",
     "total_return",
 ]
